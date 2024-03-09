@@ -71,8 +71,8 @@ async def get_users():
 
 # Endpoint to create a new user
 @app.post("/users")
-async def create_user(username: str, password: str):
-    user = await User.create(username=username, password=password)
+async def create_user(name: str, email: str, password: str):
+    user = await User.create(name=name, email=email, password=password)
     return {"message": "User added successfully"}
 
 

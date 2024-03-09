@@ -31,7 +31,8 @@ PersonalInfo_request = pydantic_model_creator(PersonalInfo, name="PersonalInfoRe
 
 class User(Model):
     id = fields.IntField(pk=True)
-    username = fields.CharField(max_length=50, unique=True)
+    name = fields.CharField(max_length=50, unique=True)
+    email = fields.CharField(max_length=255)
     password = fields.CharField(max_length=255)
 
     class Meta:
