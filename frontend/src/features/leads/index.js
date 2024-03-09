@@ -1,3 +1,5 @@
+// Lead.js
+
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
@@ -8,6 +10,7 @@ const TopSideButtons = () => {
     const dispatch = useDispatch();
 
     const openAddNewLeadModal = () => {
+        // window.location.reload();
         dispatch(openModal({ title: "Add New User", bodyType: "LEAD_ADD_NEW" }));
     };
 
@@ -30,12 +33,15 @@ function Leads() {
 
     const fetchAllUsers = async () => {
         try {
-            const apiUrl = 'http://127.0.0.1:8000/users';
+            const apiUrl = 'http://127.0.0.1:8000/get_all_personal_info';
             const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             const data = await response.json();
-            setFilteredUsers([...data]); // Update filtered users when all users are fetched
+            setFilteredUsers(data.response); // Update filtered users when all users are fetched
         } catch (error) {
-            console.error('Error fetching users:', error);
+            console.error('Error fetching personal info:', error);
         }
     };
 
@@ -52,16 +58,15 @@ function Leads() {
 
     const handleReset = async () => {
         try {
-            const apiUrl = 'http://127.0.0.1:8000/users';
+            const apiUrl = 'http://127.0.0.1:8000/get_all_personal_info';
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
-            setFilteredUsers(data); // Reset to the entire list
+            setFilteredUsers(data.response); // Reset to the entire list
         } catch (error) {
-            console.error('Error fetching users on reset:', error);
-            // You may choose to set an empty array or handle the error differently based on your requirements
+            console.error('Error fetching personal info on reset:', error);
             setFilteredUsers([]);
         }
     };

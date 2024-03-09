@@ -6,18 +6,18 @@ import { showNotification } from "../../common/headerSlice";
 import { addNewLead } from "../leadSlice";
 
 const INITIAL_LEAD_OBJ = {
-    first_name: "",
-    middle_name: "",
-    last_name: "",
+    name: "",
+    mobile_number: "",
     email: "",
     address: "",
     sex: "",
     age: "",
     date_of_birth: "",
-    past_enrollment: "",
-    phone_number: "",
     height: "",
-    weight: ""
+    weight: "",
+    fees_status: "",
+    past_registration_info: "",
+    fees_status: "",
 }
 
 function AddLeadModalBody({ closeModal }) {
@@ -26,8 +26,8 @@ function AddLeadModalBody({ closeModal }) {
     const [errorMessage, setErrorMessage] = useState("");
     const [leadObj, setLeadObj] = useState(INITIAL_LEAD_OBJ);
 
-    const saveNewLead = () => {
-        if (leadObj.first_name.trim() === "") return setErrorMessage("First Name is required!");
+    const saveNewLead = async () => {
+        if (leadObj.name.trim() === "") return setErrorMessage("Name is required!");
         else if (leadObj.email.trim() === "") return setErrorMessage("Email id is required!");
         // Additional validation or modification
         else {
@@ -35,16 +35,75 @@ function AddLeadModalBody({ closeModal }) {
             // For example, you can check the validity of the email address
             if (!isValidEmail(leadObj.email)) return setErrorMessage("Invalid email address!");
 
-            // Automatically assign user ID
-            const newLeadObjWithID = { ...leadObj, user_id: generateUserID() };
+            try {
+                const registrationNumber = new Date().getTime();
+                // Set registration_number to current time in milliseconds
+                console.log(JSON.stringify({
+                    registration_number: registrationNumber.toString(),
+                    name: leadObj.name,
+                    email: leadObj.email,
+                    address: leadObj.address,
+                    sex: leadObj.sex,
+                    age: leadObj.age,
+                    date_of_birth: leadObj.date_of_birth,
+                    mobile_number: leadObj.mobile_number,
+                    height: leadObj.height,
+                    weight: leadObj.weight,
+                    past_registration_info: leadObj.past_registration_info,
+                    fees_status: false, // Set fees_status to false
+                }));
+                
 
-            // If all validations pass, dispatch the action to add a new lead
-            dispatch(addNewLead({ newLeadObj: newLeadObjWithID }));
-            dispatch(showNotification({ message: "New Lead Added!", status: 1 }));
-            closeModal();
+                const apiUrl = 'http://127.0.0.1:8000/personal_info/';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        registration_number: registrationNumber.toString(),
+                        name: leadObj.name,
+                        email: leadObj.email,
+                        address: leadObj.address,
+                        sex: leadObj.sex,
+                        age: leadObj.age,
+                        date_of_birth: leadObj.date_of_birth,
+                        mobile_number: leadObj.mobile_number,
+                        height: leadObj.height,
+                        weight: leadObj.weight,
+                        past_registration_info: leadObj.past_registration_info,
+                        fees_status: false, // Set fees_status to false
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+
+                // Assuming you have a response structure similar to the example
+                const { status, response: savedLead } = responseData;
+
+                if (status === 'success') {
+                    // If all validations pass and backend save is successful
+                    dispatch(addNewLead({ newLeadObj: savedLead }));
+                    closeModal();
+                    window.location.reload();
+                    dispatch(showNotification({ message: "New Lead Added!", status: 1 }));
+                } else {
+                    setErrorMessage("Error saving lead data. Please try again.");
+                }
+            } catch (error) {
+                console.error('Error saving lead data:', error);
+                setErrorMessage("Error saving lead data. Please try again.");
+            }
         }
-    }
-    
+    };
+
+
+
     // Function to validate email address
     const isValidEmail = (email) => {
         // You can use a regular expression or any other method to validate email
@@ -66,32 +125,24 @@ function AddLeadModalBody({ closeModal }) {
 
     return (
         <>
-            <InputText type="text" updateType="first_name" containerStyle="mt-4" labelTitle="First Name" updateFormValue={updateFormValue} />
-            <InputText type="text" updateType="middle_name" containerStyle="mt-4" labelTitle="Middle Name" updateFormValue={updateFormValue} />
-            <InputText type="text" updateType="last_name" containerStyle="mt-4" labelTitle="Last Name" updateFormValue={updateFormValue} />
+            <InputText type="text" updateType="name" containerStyle="mt-4" labelTitle="Full Name" updateFormValue={updateFormValue} />
+            <InputText type="text" updateType="mobile_number" containerStyle="mt-4" labelTitle="Phone Number" updateFormValue={updateFormValue} />
             <InputText type="email" updateType="email" containerStyle="mt-4" labelTitle="Email Id" updateFormValue={updateFormValue} />
             <InputText type="text" updateType="address" containerStyle="mt-4" labelTitle="Address" updateFormValue={updateFormValue} />
             <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700">Sex</label>
                 <select onChange={(e) => updateFormValue({ updateType: "sex", value: e.target.value })} value={leadObj.sex} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="">Select</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
                 </select>
             </div>
             <InputText type="number" updateType="age" containerStyle="mt-4" labelTitle="Age" updateFormValue={updateFormValue} />
             <InputText type="date" updateType="date_of_birth" containerStyle="mt-4" labelTitle="Date of Birth" updateFormValue={updateFormValue} />
-            <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700">Past Enrollment</label>
-                <select onChange={(e) => updateFormValue({ updateType: "past_enrollment", value: e.target.value })} value={leadObj.past_enrollment} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    <option value="">Select</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <InputText type="text" updateType="phone_number" containerStyle="mt-4" labelTitle="Phone Number" updateFormValue={updateFormValue} />
             <InputText type="number" updateType="height" containerStyle="mt-4" labelTitle="Height" updateFormValue={updateFormValue} />
             <InputText type="number" updateType="weight" containerStyle="mt-4" labelTitle="Weight" updateFormValue={updateFormValue} />
+            <InputText type="text" updateType="past_registration_info" containerStyle="mt-4" labelTitle="Past Registration Info" updateFormValue={updateFormValue} />
+
 
             <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
             <div className="modal-action">

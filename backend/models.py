@@ -4,19 +4,18 @@ from tortoise.contrib.pydantic import pydantic_model_creator
 
 class PersonalInfo(Model):
     id = fields.IntField(pk=True)
-    first_name = fields.CharField(max_length=50)
-    middle_name = fields.CharField(max_length=50, null=True)
-    last_name = fields.CharField(max_length=50)
-    date_of_birth = fields.DateField()
+    registration_number = fields.CharField(max_length=100)
+    name = fields.CharField(max_length=100)
+    email = fields.CharField(max_length=100)
+    address = fields.TextField()
     sex = fields.CharField(max_length=1)  # Add sex field with choices
     age = fields.IntField(null=True)
-    address = fields.TextField()
-    registration_number = fields.CharField(max_length=20)
+    date_of_birth = fields.CharField(max_length=100)
     mobile_number = fields.CharField(max_length=15)
-    landline_number = fields.CharField(max_length=15, null=True)
+    height = fields.CharField(max_length=15)
+    weight = fields.CharField(max_length=15)
     past_registration_info = fields.TextField(null=True)
     fees_status = fields.BooleanField(default=False)
-    
     
     
 class SummerCamp(Model):

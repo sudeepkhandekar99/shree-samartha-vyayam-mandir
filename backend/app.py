@@ -45,7 +45,7 @@ async def read_personal_info(personal_info_id: int):
 
 @app.get('/get_all_personal_info')
 async def get_all_personal_info():
-    response = await PersonalInfo_pydantic.from_queryset(PersonalInfo.all())
+    response = await PersonalInfo_pydantic.from_queryset(PersonalInfo.all().order_by('-id'))
     return {"status": "success", "response": response}
 
 register_tortoise(
