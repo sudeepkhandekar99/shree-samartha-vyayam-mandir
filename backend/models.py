@@ -15,6 +15,9 @@ class PersonalInfo(Model):
     height = fields.CharField(max_length=15)
     weight = fields.CharField(max_length=15)
     past_registration_info = fields.TextField(null=True)
+    activity = fields.CharField(max_length=15)
+    batch = fields.CharField(default="", max_length=15)
+    division = fields.CharField(default="", max_length=15)
     fees_status = fields.BooleanField(default=False)
     
     

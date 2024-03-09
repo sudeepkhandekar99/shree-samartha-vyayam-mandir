@@ -1,2 +1,8 @@
 Forgot Password
-Logout Page
+First and last name
+Refresh is going out of bounds
+2 languages
+Data exported to CSV
+
+
+Logout Page -- Done

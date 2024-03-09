@@ -15,8 +15,10 @@ const INITIAL_LEAD_OBJ = {
     date_of_birth: "",
     height: "",
     weight: "",
-    fees_status: "",
     past_registration_info: "",
+    activity: "",
+    batch: "",
+    division: "",
     fees_status: "",
 }
 
@@ -38,22 +40,6 @@ function AddLeadModalBody({ closeModal }) {
             try {
                 const registrationNumber = new Date().getTime();
                 // Set registration_number to current time in milliseconds
-                console.log(JSON.stringify({
-                    registration_number: registrationNumber.toString(),
-                    name: leadObj.name,
-                    email: leadObj.email,
-                    address: leadObj.address,
-                    sex: leadObj.sex,
-                    age: leadObj.age,
-                    date_of_birth: leadObj.date_of_birth,
-                    mobile_number: leadObj.mobile_number,
-                    height: leadObj.height,
-                    weight: leadObj.weight,
-                    past_registration_info: leadObj.past_registration_info,
-                    fees_status: false, // Set fees_status to false
-                }));
-                
-
                 const apiUrl = 'http://127.0.0.1:8000/personal_info/';
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -73,6 +59,9 @@ function AddLeadModalBody({ closeModal }) {
                         height: leadObj.height,
                         weight: leadObj.weight,
                         past_registration_info: leadObj.past_registration_info,
+                        activity: "NA",
+                        batch: "NA",
+                        division: "NA",
                         fees_status: false, // Set fees_status to false
                     }),
                 });

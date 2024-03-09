@@ -91,14 +91,14 @@ function Leads() {
                         Search
                     </button>
                     <button className="btn ml-2" onClick={handleReset}>
-                        Reset
+                        Refresh
                     </button>
                 </div>
                 <div className="overflow-x-auto w-full">
                     <table className="table w-full">
                         <thead>
                             <tr>
-                                <th>USER ID</th>
+                                <th>Registration Number</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th></th>
@@ -107,7 +107,7 @@ function Leads() {
                         <tbody>
                             {filteredUsers.map((user) => (
                                 <tr key={user.id}>
-                                    <td>{user.id}</td>
+                                    <td>{user.registration_number}</td>
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
                                 </tr>
