@@ -109,9 +109,29 @@ function Charts() {
         }
     };
 
+    const handleDownloadIdCard = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/download_student_id_card/${registrationNumber}`);
+            const blob = await response.blob();
+
+            // Create a link element to trigger the download
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `id_card_${registrationNumber}.png`;
+            document.body.appendChild(link);
+
+            // Trigger the download
+            link.click();
+
+            // Remove the link element
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Error downloading ID card:', error);
+        }
+    };
+
     return (
         <div className="max-w-xl mx-auto mt-6">
-
             <div className="flex justify-between mb-4">
                 <div className="rounded-md shadow-md p-6">
                     <h2 className="text-2xl font-semibold mb-4">Enter Registration Number</h2>
@@ -157,9 +177,15 @@ function Charts() {
                                 <button type="button" className="btn btn-success" onClick={handleFeesPaid}>Fees Paid</button>
                             </span>
                         </div>
-
                     </form>
-
+                    <div className="mt-4">
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleDownloadIdCard}
+                        >
+                            Download ID Card
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

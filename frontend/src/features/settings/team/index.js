@@ -1,94 +1,60 @@
-import moment from "moment"
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import TitleCard from "../../../components/Cards/TitleCard"
-import { showNotification } from '../../common/headerSlice'
+import React, { useState } from 'react';
 
-const TopSideButtons = () => {
+const Team = () => {
+  const [loading, setLoading] = useState(false);
 
-    const dispatch = useDispatch()
+  const downloadData = async (status) => {
+    setLoading(true);
 
-    const addNewTeamMember = () => {
-        dispatch(showNotification({message : "Add New Member clicked", status : 1}))
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/download_personal-info/${status}`);
+      const csvData = await response.text();
+
+      // Create a Blob from the CSV data
+      const blob = new Blob([csvData], { type: 'text/csv' });
+
+      // Create a link element to trigger the download
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `personal_info_${status}.csv`;
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Remove the link element
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading data:', error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return(
-        <div className="inline-block float-right">
-            <button className="btn px-6 btn-sm normal-case btn-primary" onClick={() => addNewTeamMember()}>Invite New</button>
-        </div>
-    )
-}
+  return (
+    <>
+      <div className="inline-block float-right space-x-2">
+        <button
+          className={`btn btn-sm normal-case btn-primary ${loading && 'disabled'}`}
+          onClick={() => downloadData('unpaid')}
+        >
+          {loading ? 'Downloading...' : 'Download Unpaid'}
+        </button>
+        <button
+          className={`btn btn-sm normal-case btn-success ${loading && 'disabled'}`}
+          onClick={() => downloadData('paid')}
+        >
+          {loading ? 'Downloading...' : 'Download Paid'}
+        </button>
+        <button
+          className={`btn btn-sm normal-case btn-secondary ${loading && 'disabled'}`}
+          onClick={() => downloadData('all')}
+        >
+          {loading ? 'Downloading...' : 'Download All'}
+        </button>
+      </div>
+    </>
+  );
+};
 
-
-const TEAM_MEMBERS = [
-    {name : "Alex", avatar : "https://reqres.in/img/faces/1-image.jpg", email : "alex@dashwind.com", role : "Admin", joinedOn : moment(new Date()).add(-5*1, 'days').format("DD MMM YYYY"), lastActive : "5 hr ago"},
-    {name : "Ereena", avatar : "https://reqres.in/img/faces/2-image.jpg", email : "ereena@dashwind.com", role : "Volunteer", joinedOn : moment(new Date()).add(-5*2, 'days').format("DD MMM YYYY"), lastActive : "15 min ago"},
- 
-
-]
-
-function Team(){
-
-
-    const [members, setMembers] = useState(TEAM_MEMBERS)
-
-    const getRoleComponent = (role) => {
-        if(role  === "Admin")return <div className="badge badge-secondary">{role}</div>
-        // if(role  === "Manager")return <div className="badge">{role}</div>
-        if(role  === "Volunteer")return <div className="badge badge-primary">{role}</div>
-        // if(role  === "Support")return <div className="badge badge-accent">{role}</div>
-        else return <div className="badge badge-ghost">{role}</div>
-    }
-
-    return(
-        <>
-            
-            <TitleCard title="Active Members" topMargin="mt-2" TopSideButtons={<TopSideButtons />}>
-
-                {/* Team Member list in table format loaded constant */}
-            <div className="overflow-x-auto w-full">
-                <table className="table w-full">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email Id</th>
-                        <th>Joined On</th>
-                        <th>Role</th>
-                        <th>Last Active</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            members.map((l, k) => {
-                                return(
-                                    <tr key={k}>
-                                    <td>
-                                        <div className="flex items-center space-x-3">
-                                            <div className="avatar">
-                                                <div className="mask mask-circle w-12 h-12">
-                                                    <img src={l.avatar} alt="Avatar" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="font-bold">{l.name}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{l.email}</td>
-                                    <td>{l.joinedOn}</td>
-                                    <td>{getRoleComponent(l.role)}</td>
-                                    <td>{l.lastActive}</td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
-            </div>
-            </TitleCard>
-        </>
-    )
-}
-
-
-export default Team
+export default Team;

@@ -19,6 +19,7 @@
     "capitalize-the-first-letter": "^1.0.8",
     "chart.js": "^4.0.1",
     "dayjs": "^1.11.7",
+    "file-saver": "^2.0.5",
     "jspdf": "^2.5.1",
     "moment": "^2.29.4",
     "react": "^18.2.0",

@@ -26,39 +26,36 @@ const submenuIconClasses = `h-5 w-5`
 
 const routes = [
 
-  {
-    path: '/app/dashboard',
-    icon: <Squares2X2Icon className={iconClasses}/>, 
-    name: 'Dashboard',
-  },
+  // {
+  //   path: '/app/dashboard',
+  //   icon: <Squares2X2Icon className={iconClasses}/>, 
+  //   name: 'Dashboard',
+  // },
   {
     path: '/app/leads', // url
     icon: <UserGroupIcon className={iconClasses}/>, // icon component
-    name: 'Students', // name that appear in Sidebar
+    name: 'Register Student', // name that appear in Sidebar
   },
-  {
-    path: '/app/transactions', // url
-    icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
-    name: 'Set Fee Status', // name that appear in Sidebar
-  },
+  // {
+  //   path: '/app/transactions', // url
+  //   icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
+  //   name: 'Set Fee Status', // name that appear in Sidebar
+  // },
   {
     path: '/app/charts', // url
-    icon: <ChartBarIcon className={iconClasses}/>, // icon component
-    name: 'Get User Information', // name that appear in Sidebar
+    icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
+    // name: 'Get User Information',
+    name: 'Student Status', // name that appear in Sidebar
   },
-  {
-    path: '/app/integration', // url
-    icon: <BoltIcon className={iconClasses}/>, // icon component
-    name: 'Summer Camp', // name that appear in Sidebar
-  },
-
-
-  
-  
+  // {
+  //   path: '/app/integration', // url
+  //   icon: <BoltIcon className={iconClasses}/>, // icon component
+  //   name: 'Summer Camp', // name that appear in Sidebar
+  // },
   {
     path: '/app/settings-team', // url
-    icon: <UsersIcon className={submenuIconClasses}/>, // icon component
-    name: 'Team Members', // name that appear in Sidebar
+    icon: <Squares2X2Icon className={submenuIconClasses}/>, // icon component
+    name: 'Download Data', // name that appear in Sidebar
   },
   
   

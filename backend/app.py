@@ -5,12 +5,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from tortoise import Tortoise, fields
 from models import User
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from tortoise.contrib.fastapi import register_tortoise
 from tortoise import Tortoise, fields
 from models import User
+from googletrans import Translator
+import pandas as pd
+from io import BytesIO
+from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
+from PIL import Image, ImageDraw, ImageFont
+
+
 
 
 app = FastAPI()
+router = APIRouter()
+
+translator = Translator()
 
 origins = ['http://localhost:3000']
 
@@ -69,6 +81,39 @@ async def read_personal_info(personal_info_id: int):
         raise HTTPException(status_code=404, detail="Personal Info not found")
     return {"response": info}
 
+@app.get('/download_personal-info/{status}')
+async def download_personal_info(status: str):
+    if status == "unpaid":
+        data = await PersonalInfo_pydantic.from_queryset(
+            PersonalInfo.filter(fees_status=False).order_by('-id')
+        )
+    elif status == "paid":
+        data = await PersonalInfo_pydantic.from_queryset(
+            PersonalInfo.filter(fees_status=True).order_by('-id')
+        )
+    else:
+        data = await PersonalInfo_pydantic.from_queryset(
+            PersonalInfo.all().order_by('-id')
+        )
+
+    # Convert data to a list of dictionaries
+    data_dicts = [dict(item) for item in data]
+
+    # Convert data to pandas DataFrame
+    df = pd.DataFrame(data_dicts)
+
+    df[['registration_number', 'mobile_number']] = df[['registration_number', 'mobile_number']].astype(str)
+
+    # Convert DataFrame to CSV format
+    csv_data = df.to_csv(index=False, encoding='utf-8-sig')
+
+    # Return StreamingResponse with CSV content
+    return StreamingResponse(
+        content=csv_data,
+        media_type='text/csv',
+        headers={'Content-Disposition': f'attachment; filename=personal_info_{status}.csv'}
+    )
+
 
 @app.get('/get_all_personal_info')  
 async def get_all_personal_info():
@@ -115,49 +160,6 @@ async def update_fees_status(personal_info_id: int):
     return {"status": "success", "updated_info": updated_personal_info}
 
 
-def determine_class_and_division(age: int, sex: str) -> tuple:
-    if age >= 16:
-        class_ = "Class 1"
-    elif 14 <= age < 16:
-        class_ = "Class 2"
-    elif 11 <= age < 14:
-        class_ = "Class 3"
-    elif 9 <= age < 11:
-        class_ = "Class 4"
-    elif 7 <= age < 9:
-        class_ = "Class 5"
-    elif 6 <= age < 7:
-        class_ = "Class 6"
-    else:
-        class_ = "Class 7"
-
-    division = "A" if sex == "M" else "B" if sex == "F" else None
-
-    return class_, division
-
-
-@app.get("/paid_students")
-async def get_paid_students():
-    paid_students = await PersonalInfo.filter(fees_status=True).values(
-        "id", "first_name", "last_name", "age", "sex", "mobile_number"
-    )
-    paid_students_data = []
-    for student in paid_students:
-        class_, division = determine_class_and_division(student.get("age", 0), student.get("sex", ""))
-        if class_:
-            student_data = {
-                "id": student.get("id"),
-                "first_name": student.get("first_name"),
-                "last_name": student.get("last_name"),
-                "class": class_,
-                "division": division,
-                "phone_number": student.get("mobile_number")
-            }
-            paid_students_data.append(student_data)
-    
-    return {"status": "success", "paid_students": paid_students_data}
-
-
 register_tortoise(
     app,
     db_url="sqlite://database.sqlite3",
@@ -165,3 +167,42 @@ register_tortoise(
     generate_schemas=True,
     add_exception_handlers=True
 )
+
+@app.get('/download_student_id_card/{registration_number}')
+async def download_student_id_card(registration_number: str):
+    # Fetch user data based on the registration number
+    user_data = await PersonalInfo_pydantic.from_queryset(
+        PersonalInfo.filter(registration_number=registration_number)
+    )
+
+    if not user_data:
+        # Handle the case when the user is not found
+        return JSONResponse(content={"error": "User not found"}, status_code=404)
+
+    # Create an image for the ID card
+    image = create_id_card_image(user_data[0])
+
+    # Save the image to a BytesIO buffer
+    image_buffer = BytesIO()
+    image.save(image_buffer, format="PNG")
+    image_buffer.seek(0)
+
+    # Return StreamingResponse with the image content
+    return StreamingResponse(
+        content=image_buffer,
+        media_type='image/png',
+        headers={'Content-Disposition': f'attachment; filename=id_card_{registration_number}.png'}
+    )
+
+def create_id_card_image(user_data):
+    # Create a blank image
+    image = Image.new('RGB', (640, 480), color='white')
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+
+    # Draw user data on the image
+    draw.text((10, 10), f"Name: {user_data.name}", fill='black', font=font)
+    draw.text((10, 30), f"Registration Number: {user_data.registration_number}", fill='black', font=font)
+    # Add more fields as needed
+
+    return image
