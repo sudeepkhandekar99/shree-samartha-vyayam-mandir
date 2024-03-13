@@ -42,6 +42,24 @@ def index():
 
 @app.post('/personal_info/')
 async def create_personal_info(payload: PersonalInfo_request):
+    age = payload.age
+    if age >= 16:
+        payload.batch = "Class 1"
+    elif 14 <= age < 16:
+        payload.batch = "Class 2"
+    elif 11 <= age < 14:
+        payload.batch = "Class 3"
+    elif 9 <= age < 11:
+        payload.batch = "Class 4"
+    elif 7 <= age < 9:
+        payload.batch = "Class 5"
+    elif 6 <= age < 7:
+        payload.batch = "Class 6"
+    else:
+        payload.batch = "Class 7"
+    total = await PersonalInfo.all().count() 
+    payload.activity = "Morning" if total <=150 else "Evening"
+    payload.division = "A" if payload.sex == 'M' else "B"
     new_info = await PersonalInfo.create(**payload.dict())
     response  = await PersonalInfo_pydantic.from_tortoise_orm(new_info)
     return {"status": "success", "response": response}

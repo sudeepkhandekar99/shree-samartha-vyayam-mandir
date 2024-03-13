@@ -50,6 +50,9 @@ function Login() {
       (user) => user.email === loginObj.email && user.password === loginObj.password
     );
 
+    console.log("matchingUser");  
+    console.log(matchingUser);  
+
     if (matchingUser) {
       // Authentication successful
       // Save user data or token in localStorage if needed

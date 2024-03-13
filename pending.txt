@@ -5,3 +5,10 @@ Refresh is going out of bounds
 
 Data exported to CSV -- Done
 Logout Page -- Done
+
+
+ID details:
+name
+batch - evening and morning
+class - class number
+div 
