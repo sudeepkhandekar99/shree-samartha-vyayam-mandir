@@ -35,7 +35,7 @@ function Register() {
     }
 
     try {
-      const apiUrl = `http://127.0.0.1:8000/users?name=${registerObj.name}&email=${registerObj.emailId}&password=${registerObj.password}`;
+      const apiUrl = `http://143.110.190.154:8000/users?name=${registerObj.name}&email=${registerObj.emailId}&password=${registerObj.password}`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',

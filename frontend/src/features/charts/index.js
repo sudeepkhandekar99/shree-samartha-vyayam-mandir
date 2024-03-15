@@ -22,7 +22,7 @@ function Charts() {
 
     const getUserData = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/personal-info/${registrationNumber}`);
+            const response = await fetch(`http://143.110.190.154:8000/personal-info/${registrationNumber}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -54,7 +54,7 @@ function Charts() {
     const handleSave = async () => {
         try {
             const { id, ...userDataWithoutId } = userData;
-            const apiUrl = `http://127.0.0.1:8000/personal_info/${registrationNumber}`;
+            const apiUrl = `http://143.110.190.154:8000/personal_info/${registrationNumber}`;
             const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
@@ -86,7 +86,7 @@ function Charts() {
 
     const handleFeesPaid = async () => {
         try {
-            const apiUrl = `http://127.0.0.1:8000/update_fees_status/${registrationNumber}`;
+            const apiUrl = `http://143.110.190.154:8000/update_fees_status/${registrationNumber}`;
             const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
@@ -111,7 +111,7 @@ function Charts() {
 
     const handleDownloadIdCard = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/download_student_id_card/${registrationNumber}`);
+            const response = await fetch(`http://143.110.190.154:8000/download_student_id_card/${registrationNumber}`);
             const blob = await response.blob();
 
             // Create a link element to trigger the download
@@ -168,7 +168,11 @@ function Charts() {
                         <EditableInput label="Activity" value={userData.activity} onChange={(value) => handleFieldChange('activity', value)} />
                         <EditableInput label="Batch" value={userData.batch} onChange={(value) => handleFieldChange('batch', value)} />
                         <EditableInput label="Division" value={userData.division} onChange={(value) => handleFieldChange('division', value)} />
-                        <EditableInput label="Fees Status" value={userData.fees_status ? 'Paid' : 'Unpaid'} onChange={(value) => handleFieldChange('fees_status', value)} disabled={true} />
+                        <EditableInput
+                            label="Summer Camp ID"
+                            value={userData.summer_camp_id !== 0 ? userData.summer_camp_id : "Fees Pending"}
+                            onChange={(value) => handleFieldChange('division', value)}
+                        />                        <EditableInput label="Fees Status" value={userData.fees_status ? 'Paid' : 'Unpaid'} onChange={(value) => handleFieldChange('fees_status', value)} disabled={true} />
                         <div className="mt-4">
                             <span className="mr-2">
                                 <button type="button" className="btn btn-primary" onClick={handleSave}>Save</button>

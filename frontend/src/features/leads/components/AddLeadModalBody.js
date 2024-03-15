@@ -40,7 +40,7 @@ function AddLeadModalBody({ closeModal }) {
             try {
                 const registrationNumber = new Date().getTime();
                 // Set registration_number to current time in milliseconds
-                const apiUrl = 'http://127.0.0.1:8000/personal_info/';
+                const apiUrl = 'http://143.110.190.154:8000/personal_info/';
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
@@ -59,7 +59,7 @@ function AddLeadModalBody({ closeModal }) {
                         height: leadObj.height,
                         weight: leadObj.weight,
                         past_registration_info: leadObj.past_registration_info,
-                        activity: "NA",
+                        activity: leadObj.activity,
                         batch: "NA",
                         division: "NA",
                         fees_status: false, // Set fees_status to false
@@ -120,10 +120,18 @@ function AddLeadModalBody({ closeModal }) {
             <InputText type="text" updateType="address" containerStyle="mt-4" labelTitle="Address" updateFormValue={updateFormValue} />
             <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700">Sex</label>
-                <select onChange={(e) => updateFormValue({ updateType: "sex", value: e.target.value })} value={leadObj.sex} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <select onChange={(e) => updateFormValue({ updateType: "sex", value: e.target.value })} value={leadObj.sex} className="mt-4 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="">Select</option>
                     <option value="M">Male</option>
                     <option value="F">Female</option>
+                </select>
+            </div>
+            <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700">Activity</label>
+                <select onChange={(e) => updateFormValue({ updateType: "activity", value: e.target.value })} value={leadObj.activity} className="mt-4 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <option value="">Select</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Evening">Evening</option>
                 </select>
             </div>
             <InputText type="number" updateType="age" containerStyle="mt-4" labelTitle="Age" updateFormValue={updateFormValue} />

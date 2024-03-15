@@ -7,7 +7,7 @@ const Team = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/download_personal-info/${status}`);
+      const response = await fetch(`http://143.110.190.154:8000/download_personal-info/${status}`);
       const csvData = await response.text();
 
       // Create a Blob from the CSV data

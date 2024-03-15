@@ -18,7 +18,7 @@ function Login() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const apiUrl = 'http://127.0.0.1:8000/users';
+        const apiUrl = 'http://143.110.190.154:8000/users';
         const response = await fetch(apiUrl);
         const data = await response.json();
         setUsers(data);

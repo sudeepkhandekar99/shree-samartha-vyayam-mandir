@@ -33,7 +33,7 @@ function Leads() {
 
     const fetchAllUsers = async () => {
         try {
-            const apiUrl = 'http://127.0.0.1:8000/get_all_personal_info';
+            const apiUrl = 'http://143.110.190.154:8000/get_all_personal_info';
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -58,7 +58,7 @@ function Leads() {
 
     const handleReset = async () => {
         try {
-            const apiUrl = 'http://127.0.0.1:8000/get_all_personal_info';
+            const apiUrl = 'http://143.110.190.154:8000/get_all_personal_info';
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
