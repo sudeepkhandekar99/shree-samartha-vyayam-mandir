@@ -19,7 +19,12 @@ class PersonalInfo(Model):
     batch = fields.CharField(default="", max_length=15) # class 1..2...3..
     division = fields.CharField(default="", max_length=15) # based on mail and female
     fees_status = fields.BooleanField(default=False)
-    
+    summer_camp_id =  fields.IntField(default=0, max_length=15)
+
+
+class SummerID(Model):
+    id = fields.IntField(pk=True)
+    personal_info_id = fields.IntField(default=0, max_length=15)
     
 class SummerCamp(Model):
     id = fields.IntField(pk=True)

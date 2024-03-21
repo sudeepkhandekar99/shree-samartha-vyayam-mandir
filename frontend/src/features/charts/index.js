@@ -171,7 +171,7 @@ function Charts() {
                         <EditableInput
                             label="Summer Camp ID"
                             value={userData.summer_camp_id !== 0 ? userData.summer_camp_id : "Fees Pending"}
-                            onChange={(value) => handleFieldChange('division', value)}
+                            onChange={(value) => handleFieldChange('summer_camp_id', value)}
                         />                        <EditableInput label="Fees Status" value={userData.fees_status ? 'Paid' : 'Unpaid'} onChange={(value) => handleFieldChange('fees_status', value)} disabled={true} />
                         <div className="mt-4">
                             <span className="mr-2">

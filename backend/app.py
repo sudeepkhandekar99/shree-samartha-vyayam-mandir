@@ -57,8 +57,6 @@ async def create_personal_info(payload: PersonalInfo_request):
         payload.batch = "Class 6"
     else:
         payload.batch = "Class 7"
-    total = await PersonalInfo.all().count() 
-    payload.activity = "Morning" if total <=150 else "Evening"
     payload.division = "A" if payload.sex == 'M' else "B"
     new_info = await PersonalInfo.create(**payload.dict())
     response  = await PersonalInfo_pydantic.from_tortoise_orm(new_info)
@@ -170,12 +168,21 @@ async def create_user(name: str, email: str, password: str):
 @app.put('/update_fees_status/{personal_info_id}')
 async def update_fees_status(personal_info_id: int):
     personal_info = await PersonalInfo.get_or_none(registration_number=personal_info_id)
+    
     if personal_info is None:
         raise HTTPException(status_code=404, detail="Personal Info not found")
+    
     personal_info.fees_status = True
+
+    if personal_info.summer_camp_id:
+        pass
+    else:
+        summer_camp_record = await SummerID.create(personal_info_id=personal_info_id)
+        await summer_camp_record.save()
+        personal_info.summer_camp_id = summer_camp_record.id
+    
     await personal_info.save()
-    updated_personal_info = await PersonalInfo_pydantic.from_tortoise_orm(personal_info)
-    return {"status": "success", "updated_info": updated_personal_info}
+    return {"status": "success", "updated_info": personal_info}
 
 
 register_tortoise(
@@ -214,13 +221,31 @@ async def download_student_id_card(registration_number: str):
 
 def create_id_card_image(user_data):
     # Create a blank image
-    image = Image.new('RGB', (640, 480), color='white')
+    image = Image.new('RGB', (800, 600), color='white')
     draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()
+
+    font = ImageFont.truetype("arial.ttf", size=32)
+
+    # Define text color
+    text_color = (0, 0, 0)  # Black color
+
+    # Draw background rectangle
+    draw.rectangle([(50, 50), (750, 550)], fill="#f2f2f2", outline="#000000")
+
+    # Load and resize logo image
+    logo_path = "../frontend/public/favicon-16x16.png"  # Provide the path to your logo file
+    logo = Image.open(logo_path)
+    logo = logo.resize((100, 100))  # Adjust size as needed
+
+    # Paste logo onto the ID card
+    image.paste(logo, (350, 100))  # Adjust position as needed
 
     # Draw user data on the image
-    draw.text((10, 10), f"Name: {user_data.name}", fill='black', font=font)
-    draw.text((10, 30), f"Registration Number: {user_data.registration_number}", fill='black', font=font)
-    # Add more fields as needed
+    draw.text((100, 250), f"Name: {user_data.name}", fill=text_color, font=font)
+    draw.text((100, 300), f"Registration Number: {user_data.registration_number}", fill=text_color, font=font)
+    draw.text((100, 350), f"Summer Camp ID: {user_data.summer_camp_id}", fill=text_color, font=font)
+    draw.text((100, 400), f"Class: {user_data.batch}", fill=text_color, font=font)
+    draw.text((100, 450), f"Division: {user_data.division}", fill=text_color, font=font)
+    draw.text((100, 500), f"Timings: {user_data.activity}", fill=text_color, font=font)
 
     return image

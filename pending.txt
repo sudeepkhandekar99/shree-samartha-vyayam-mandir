@@ -1,14 +1,4 @@
-Forgot Password
 First and last name
-Refresh is going out of bounds
+Refresh button is going out of bounds
 2 languages
-
-Data exported to CSV -- Done
-Logout Page -- Done
-
-
-ID details:
-name
-batch - evening and morning
-class - class number
-div 
+Forgot Password
